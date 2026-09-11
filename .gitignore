@@ -1,0 +1,8 @@
+# .gitignore
+node_modules/
+config.json
+config-production.json
+uploads/*
+!uploads/.gitkeep
+coverage/
+*.log

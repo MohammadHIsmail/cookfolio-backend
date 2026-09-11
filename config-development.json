@@ -1,0 +1,15 @@
+{
+  "env": "development",
+  "port": 3000,
+  "db": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "cookfoliodb",
+    "user": "postgres",
+    "password": "password"
+  },
+  "jwt": {
+    "secret": "dev_only_secret_change_me",
+    "expiresIn": "7d"
+  }
+}
