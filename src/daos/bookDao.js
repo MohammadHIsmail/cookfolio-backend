@@ -18,7 +18,7 @@ async function findPublicById(id) {
   return rows[0] || null;
 }
 
-async function findPublic() {
+async function findAll() {
   const { rows } = await pool.query(
     `SELECT ${PUBLIC_BOOK_COLUMNS} FROM books`
   );
@@ -58,4 +58,4 @@ async function toggleFavorite(id) {
 
 // TODO: create(?) bulk delete and bulk favorite and create share books ops (add/remove)
 
-module.exports = { findPublicById, findPublic, create, toggleFavorite, remove };
+module.exports = { findPublicById, findAll, create, toggleFavorite, remove };

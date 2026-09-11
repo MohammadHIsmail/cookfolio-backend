@@ -13,7 +13,7 @@ async function findPublicById(id) {
   return rows[0] || null;
 }
 
-async function findPublic() {
+async function findAll() {
   const { rows } = await pool.query(
     `SELECT ${PUBLIC_CATEGORY_COLUMNS} FROM categories`
   );
@@ -21,7 +21,7 @@ async function findPublic() {
 }
 
 // TODO: on create add to pivot table?
-async function create({name}) {
+async function create({name, userId}) {
   const { rows } = await pool.query(
     `INSERT INTO categories (name)
      VALUES ($1)
@@ -36,4 +36,4 @@ async function remove(id) {
   await pool.query('DELETE FROM categories WHERE id = $1', [id]);
 }
 
-module.exports = { findPublicById, findPublic, create, remove };
+module.exports = { findPublicById, findAll, create, remove };
