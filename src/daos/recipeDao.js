@@ -32,26 +32,50 @@ async function findAll() {
   return rows || null;
 }
 
-// TODO: implement adding ids to books-recipes piviot table
 async function create({ 
-    name, 
-    ingredients, 
-    directions , 
-    image , 
-    prepTime , 
-    cookTime , 
-    servings , 
-    cuisineId , 
-    categoryId , 
-    subcategoryId , 
-    bookId }) {
-  const { rows } = await pool.query(
-    `INSERT INTO recipes (name, ingredients, directions, image, prep_time, cook_time, servings, cuisine_id, category_id, subcategory_id)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-     RETURNING ${PUBLIC_RECIPES_COLUMNS}`,
-    [name, ingredients, directions, image, prepTime, cookTime, servings, cuisineId, categoryId, subcategoryId]
-  );
-  return rows[0];
+  name, 
+  ingredients, 
+  directions , 
+  image , 
+  prepTime , 
+  cookTime , 
+  servings , 
+  cuisineId , 
+  categoryId , 
+  subcategoryId , 
+  bookId }) {
+  try {
+    // 2. Start the transaction
+    await client.query('BEGIN');
+
+    // 3. Create the recipe and grab its new ID
+    const recipeResult = await client.query(
+      `INSERT INTO recipes (name, ingredients, directions, image, prep_time, cook_time, servings, cuisine_id, category_id, subcategory_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING ${PUBLIC_RECIPES_COLUMNS}`,
+      [name, ingredients, directions, image, prepTime, cookTime, servings, cuisineId, categoryId, subcategoryId]
+    );
+    const newRecipe = recipeResult.rows[0];
+
+    // 4. Insert the connection into your pivot table
+    await client.query(
+      `INSERT INTO books_recipes (book_id, recipe_id)
+       VALUES ($1, $2)`,
+      [bookId, newRecipe.id] // Uses the ID returned from the first query
+    );
+
+    // 5. Commit the transaction to save both records permanently
+    await client.query('COMMIT');
+
+    return newRecipe;
+  } catch (error) {
+    // 6. If anything goes wrong, undo everything to protect data integrity
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    // 7. Always release the client back to the pool
+    client.release();
+  }
 }
 
 // TODO: confirm flow for deleting recipes
@@ -69,12 +93,53 @@ async function toggleFavorite(id) {
     `UPDATE recipes
      SET is_favorite = NOT is_favorite,
      WHERE id = $1
-     RETURNING ${PUBLIC_USER_COLUMNS}`,
+     RETURNING ${PUBLIC_RECIPES_COLUMNS}`,
     [id]
+  );
+  return rows[0] || null;
+}
+
+async function update(id, { 
+  name, 
+  ingredients, 
+  directions , 
+  image , 
+  prepTime , 
+  cookTime , 
+  servings , 
+  cuisineId , 
+  categoryId , 
+  subcategoryId }) {
+  const { rows } = await pool.query(
+    `UPDATE recipes
+     SET name = COALESCE($2, name),
+         ingredients = COALESCE($3, ingredients),
+         directions = COALESCE($4, directions),
+         image = COALESCE($5, image),
+         prep_time = COALESCE($6, prep_time),
+         cook_time = COALESCE($7, cook_time),
+         servings = COALESCE($8, servings),
+         cuisine_id = COALESCE($9, cuisine_id),
+         category_id = COALESCE($10, category_id),
+         subcategory_id = COALESCE($11, subcategory_id),
+     WHERE id = $1
+     RETURNING ${PUBLIC_RECIPES_COLUMNS}`,
+    [id, name, ingredients, directions, image, prepTime, cookTime, servings, cuisineId, categoryId, subcategoryId]
+  );
+  return rows[0] || null;
+}
+
+// TODO: check for receiverId through email sent by checking if it exists first in the service file?
+async function share(id, { senderId, receiverId }) {
+  const { rows } = await pool.query(
+    `INSERT INTO user_shares (user_id_shared_from, user_id_shared_to, recipe_id)
+     VALUES ($2, $3, $1)
+     RETURNING ${PUBLIC_BOOK_COLUMNS}`,//should there be a return
+    [id, senderId, receiverId]
   );
   return rows[0] || null;
 }
 
 // TODO: create(?) bulk delete and bulk favorite and create share recipess ops (add/remove)
 
-module.exports = { findPublicById, findAll, create, toggleFavorite, remove };
+module.exports = { findPublicById, findAll, create, toggleFavorite, remove, update, share };

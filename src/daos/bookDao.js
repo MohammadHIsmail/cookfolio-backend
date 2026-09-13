@@ -56,6 +56,18 @@ async function toggleFavorite(id) {
   return rows[0] || null;
 }
 
-// TODO: create(?) bulk delete and bulk favorite and create share books ops (add/remove)
+async function update(id, { name, image }) {
+  const { rows } = await pool.query(
+    `UPDATE books
+     SET name = COALESCE($2, name),
+         image = COALESCE($3, image),
+     WHERE id = $1
+     RETURNING ${PUBLIC_BOOK_COLUMNS}`,
+    [id, name, image]
+  );
+  return rows[0] || null;
+}
 
-module.exports = { findPublicById, findAll, create, toggleFavorite, remove };
+// TODO: create(?) bulk delete and bulk favorite & create share books ops (add/remove)
+
+module.exports = { findPublicById, findAll, create, toggleFavorite, remove, update };
