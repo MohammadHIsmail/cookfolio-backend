@@ -2,7 +2,7 @@ const { Router } = require('express');
 const bookService = require('../services/bookService');
 const authenticate = require('../middleware/authenticate');
 const validate = require('../middleware/validate');
-const { createBookSchema } = require('../validators/bookValidator');
+const { createBookSchema, updateBookSchema } = require('../validators/bookValidator');
 const { HTTP_STATUS } = require('../../constants');
 
 const router = Router();
@@ -34,7 +34,7 @@ router.post('/', authenticate, validate(createBookSchema), async (request, respo
   }
 });
 
-router.put('/:id', authenticate, async (request, response, next) => {
+router.put('/:id', authenticate, validate(updateBookSchema), async (request, response, next) => {
   try {
     const book = await bookService.update(request.params.id, request.body);
     response.status(HTTP_STATUS.OK).json(book);
