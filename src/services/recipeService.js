@@ -26,4 +26,9 @@ async function remove(id) {
   return recipeDao.remove(id);
 }
 
-module.exports = { list, get, create, toggleFavorite, remove };
+async function update(id, data) {
+  await get(id);
+  return recipeDao.update(id, {...data});
+}
+
+module.exports = { list, get, create, toggleFavorite, remove, update };

@@ -21,4 +21,9 @@ async function remove(id) {
   return subcategoryDao.remove(id);
 }
 
-module.exports = { list, get, create, remove };
+async function update(id, name) {
+  await get(id);
+  return subcategoryDao.update(id, name);
+}
+
+module.exports = { list, get, create, remove, update };
