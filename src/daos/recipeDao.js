@@ -9,6 +9,7 @@ const PUBLIC_RECIPES_COLUMNS = `
   prep_time AS "prepTime",
   cook_time AS "cookTime",
   servings,
+  notes,
   cuisine_id AS "cuisineId",
   category_id AS "categoryId",
   subcategory_id AS "subcategoryId",
@@ -35,14 +36,15 @@ async function findAll() {
 async function create({ 
   name, 
   ingredients, 
-  directions , 
-  image , 
-  prepTime , 
-  cookTime , 
-  servings , 
-  cuisineId , 
-  categoryId , 
-  subcategoryId , 
+  directions, 
+  image, 
+  prepTime, 
+  cookTime, 
+  servings, 
+  notes, 
+  cuisineId, 
+  categoryId, 
+  subcategoryId, 
   bookId }) {
   try {
     // 2. Start the transaction
@@ -50,10 +52,10 @@ async function create({
 
     // 3. Create the recipe and grab its new ID
     const recipeResult = await client.query(
-      `INSERT INTO recipes (name, ingredients, directions, image, prep_time, cook_time, servings, cuisine_id, category_id, subcategory_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `INSERT INTO recipes (name, ingredients, directions, image, prep_time, cook_time, servings, notes, cuisine_id, category_id, subcategory_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING ${PUBLIC_RECIPES_COLUMNS}`,
-      [name, ingredients, directions, image, prepTime, cookTime, servings, cuisineId, categoryId, subcategoryId]
+      [name, ingredients, directions, image, prepTime, cookTime, servings, notes, cuisineId, categoryId, subcategoryId]
     );
     const newRecipe = recipeResult.rows[0];
 
@@ -102,13 +104,14 @@ async function toggleFavorite(id) {
 async function update(id, { 
   name, 
   ingredients, 
-  directions , 
-  image , 
-  prepTime , 
-  cookTime , 
-  servings , 
-  cuisineId , 
-  categoryId , 
+  directions, 
+  image, 
+  prepTime, 
+  cookTime, 
+  servings, 
+  notes, 
+  cuisineId, 
+  categoryId, 
   subcategoryId }) {
   const { rows } = await pool.query(
     `UPDATE recipes
@@ -119,12 +122,13 @@ async function update(id, {
          prep_time = COALESCE($6, prep_time),
          cook_time = COALESCE($7, cook_time),
          servings = COALESCE($8, servings),
-         cuisine_id = COALESCE($9, cuisine_id),
-         category_id = COALESCE($10, category_id),
-         subcategory_id = COALESCE($11, subcategory_id),
+         notes = COALESCE($9, notes),
+         cuisine_id = COALESCE($10, cuisine_id),
+         category_id = COALESCE($11, category_id),
+         subcategory_id = COALESCE($12, subcategory_id),
      WHERE id = $1
      RETURNING ${PUBLIC_RECIPES_COLUMNS}`,
-    [id, name, ingredients, directions, image, prepTime, cookTime, servings, cuisineId, categoryId, subcategoryId]
+    [id, name, ingredients, directions, image, prepTime, cookTime, servings, notes, cuisineId, categoryId, subcategoryId]
   );
   return rows[0] || null;
 }

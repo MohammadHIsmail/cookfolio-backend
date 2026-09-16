@@ -14,6 +14,7 @@ const createRecipeSchema = z.object({
   prepTime: z.number().int().positive().nullable().optional(),
   cookTime: z.number().int().positive().nullable().optional(),
   servings: z.number().int().positive().nullable().optional(),
+  notes: z.string().min(1).max(255).nullable().optional(),
   cuisineId: z.uuid().nullable().optional(),
   categoryId: z.uuid().nullable().optional(),
   subcategoryId: z.uuid().nullable().optional(),

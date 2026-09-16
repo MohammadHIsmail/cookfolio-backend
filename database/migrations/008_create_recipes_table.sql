@@ -8,6 +8,7 @@ CREATE TABLE recipes (
   prep_time INTEGER,
   cook_time INTEGER,
   servings INTEGER,
+  notes VARCHAR(255),
   cuisine_id UUID REFERENCES cuisines(id) ON DELETE SET NULL,
   category_id UUID REFERENCES categories(id) ON DELETE SET NULL,
   subcategory_id UUID REFERENCES subcategories(id) ON DELETE SET NULL,
