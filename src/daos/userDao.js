@@ -37,15 +37,19 @@ async function create({ email, password, name, username }) {
 }
 
 // TODO: check proper flow to verify by OTP where might need to send OTP value as well
-async function verify(email) {
-  const { rows } = await pool.query(
-    `UPDATE users
-     SET is_verified = TRUE,
-     WHERE email = $1
-     RETURNING ${PUBLIC_USER_COLUMNS}`,
-    [email]
-  );
-  return rows[0] || null;
+// async function verify(email) {
+//   const { rows } = await pool.query(
+//     `UPDATE users
+//      SET is_verified = TRUE,
+//      WHERE email = $1
+//      RETURNING ${PUBLIC_USER_COLUMNS}`,
+//     [email]
+//   );
+//   return rows[0] || null;
+// }
+
+async function verify(id) {
+  await pool.query(`UPDATE users SET is_verified = true WHERE id = $1`, [id]);
 }
 
 // TODO: confirm flow for deleting users

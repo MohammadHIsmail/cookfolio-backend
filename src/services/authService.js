@@ -27,4 +27,12 @@ async function login({ email, password }) {
   return { token };
 }
 
-module.exports = { register, login };
+async function updatePassword(userId, newPassword) {
+  const hashed = await bcrypt.hash(newPassword, 12);
+  await pool.query(
+    `UPDATE users SET password = $1 WHERE id = $2`,
+    [hashed, userId]
+  );
+}
+
+module.exports = { register, login, updatePassword };

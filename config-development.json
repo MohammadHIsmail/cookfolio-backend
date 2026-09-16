@@ -11,5 +11,18 @@
   "jwt": {
     "secret": "dev_only_secret_change_me",
     "expiresIn": "7d"
+  },
+  "otp": {
+    "length": 6,
+    "ttlMinutes": 10,
+    "maxAttempts": 5,
+    "resendCooldownSeconds": 60
+  },
+  "smtp": {
+    "host": "smtp.mailtrap.io",
+    "port": 587,
+    "user": "REPLACE_ME",
+    "password": "REPLACE_ME",
+    "from": "noreply@cookfolio.app"
   }
 }

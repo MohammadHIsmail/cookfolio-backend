@@ -21,6 +21,11 @@ const SORT_ORDERS = {
   DESC: 'desc',
 };
 
+const OTP_PURPOSES = {
+  EMAIL_VERIFICATION: 'email_verification',
+  PASSWORD_RESET: 'password_reset',
+};
+
 // Maps API-facing sort keys to real column names, so query params
 // never get interpolated directly into SQL.
 const POST_SORT_COLUMNS = {
@@ -32,5 +37,6 @@ module.exports = {
   HTTP_STATUS,
   USER_ROLES,
   SORT_ORDERS,
+  OTP_PURPOSES,
   POST_SORT_COLUMNS,
 };
