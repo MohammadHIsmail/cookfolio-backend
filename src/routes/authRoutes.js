@@ -12,7 +12,8 @@ const {
   verifyOtpSchema,
   resetPasswordSchema,
 } = require('../validators/authValidator');
-const { OTP_PURPOSES, HTTP_STATUS } = require('../../constants')
+const passport = require('passport');
+const { OTP_PURPOSES, HTTP_STATUS } = require('../../constants');
 
 const router = Router();
 
@@ -112,6 +113,47 @@ router.post(
     } catch (err) {
       next(err);
     }
+  }
+);
+
+// --- Google OAuth ---
+
+// Step 1: redirect the user to Google's consent screen.
+router.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'], session: false })
+);
+
+// Step 2: Google redirects back here after the user consents.
+// Passport runs the GoogleStrategy callback, which calls oauthService,
+// which returns { token, user } as req.user.
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { session: false, failureRedirect: config.oauth.failureRedirect }),
+  (request, response) => {
+    // For a mobile/SPA client: redirect with the token in the URL
+    // so the client can extract it and store it.
+    // For a server-rendered app: set a session cookie instead.
+    const { token } = request.user;
+    response.redirect(`${config.oauth.successRedirect}?token=${token}`);
+  }
+);
+
+// --- Apple OAuth ---
+
+// Step 1: redirect to Apple's consent screen.
+router.get(
+  '/apple',
+  passport.authenticate('apple', { session: false })
+);
+
+// Step 2: Apple POSTs back (not GET — Apple uses POST for its callback).
+router.post(
+  '/apple/callback',
+  passport.authenticate('apple', { session: false, failureRedirect: config.oauth.failureRedirect }),
+  (request, response) => {
+    const { token } = request.user;
+    response.redirect(`${config.oauth.successRedirect}?token=${token}`);
   }
 );
 

@@ -24,5 +24,21 @@
     "user": "REPLACE_ME",
     "password": "REPLACE_ME",
     "from": "noreply@cookfolio.app"
+  },
+  "oauth": {
+    "google": {
+      "clientId": "REPLACE_ME",
+      "clientSecret": "REPLACE_ME",
+      "callbackUrl": "http://localhost:3000/api/v1/auth/google/callback"
+    },
+    "apple": {
+      "clientId": "REPLACE_ME",
+      "teamId": "REPLACE_ME",
+      "keyId": "REPLACE_ME",
+      "privateKey": "REPLACE_ME",
+      "callbackUrl": "http://localhost:3000/api/v1/auth/apple/callback"
+    },
+    "successRedirect": "http://localhost:3000/home",
+    "failureRedirect": "http://localhost:3000/login?error=oauth_failed"
   }
 }

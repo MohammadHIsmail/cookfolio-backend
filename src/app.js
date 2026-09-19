@@ -1,5 +1,7 @@
 require('./jobs/otpCleanup');
+require('./config/passport');   // registers the Google + Apple strategies
 
+const passport = require('passport');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -17,6 +19,7 @@ app.use(cors());
 app.use(compression());
 app.use(express.json());
 app.use(morgan('dev'));
+app.use(passport.initialize());
 
 app.use('/api/v1', routes);
 

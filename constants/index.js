@@ -26,6 +26,12 @@ const OTP_PURPOSES = {
   PASSWORD_RESET: 'password_reset',
 };
 
+const AUTH_PROVIDERS = {
+  LOCAL: 'local',
+  GOOGLE: 'google',
+  APPLE: 'apple',
+};
+
 // Maps API-facing sort keys to real column names, so query params
 // never get interpolated directly into SQL.
 const POST_SORT_COLUMNS = {
@@ -38,5 +44,6 @@ module.exports = {
   USER_ROLES,
   SORT_ORDERS,
   OTP_PURPOSES,
+  AUTH_PROVIDERS,
   POST_SORT_COLUMNS,
 };
