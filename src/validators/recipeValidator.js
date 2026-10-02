@@ -23,4 +23,29 @@ const createRecipeSchema = z.object({
 // PATCH-style updates: every field optional, but still validated when present.
 const updateRecipeSchema = createRecipeSchema.partial();
 
-module.exports = { createRecipeSchema, updateRecipeSchema };
+// Query params for GET /recipes
+const listRecipesSchema = z.object({
+  // Sorting
+  sortBy: z
+    .enum(Object.keys(RECIPE_SORT_COLUMNS))
+    .optional()
+    .default('createdAt'),
+  order: z
+    .enum(Object.values(SORT_ORDERS))
+    .optional()
+    .default(SORT_ORDERS.DESC),
+
+  // Filters
+  cuisineId: z.string().uuid().optional(),
+  categoryId: z.string().uuid().optional(),
+  subcategoryId: z.string().uuid().optional(),
+  ingredient: z.string().min(1).optional(),  // matched against ingredients[].name
+  dateFrom: z.iso.datetime({ offset: true }).optional(),
+  dateTo: z.iso.datetime({ offset: true }).optional(),
+
+  // Pagination
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+});
+
+module.exports = { createRecipeSchema, updateRecipeSchema, listRecipesSchema };

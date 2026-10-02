@@ -7,10 +7,10 @@ const { HTTP_STATUS } = require('../../constants');
 
 const router = Router();
 
-router.get('/', authenticate, async (request, response, next) => {
+router.get('/', authenticate, validateQuery(listRecipesSchema), async (request, response, next) => {
   try {
-    const recipes = await recipeService.list();
-    response.status(HTTP_STATUS.OK).json(recipes);
+    const result = await recipeService.list(request.query);
+    response.status(HTTP_STATUS.OK).json(result);
   } catch (err) {
     next(err);
   }

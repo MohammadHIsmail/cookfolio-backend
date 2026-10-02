@@ -21,6 +21,11 @@ const SORT_ORDERS = {
   DESC: 'desc',
 };
 
+const RECIPE_SORT_COLUMNS = {
+  name: 'r.name',
+  createdAt: 'r.created_at',
+};
+
 const OTP_PURPOSES = {
   EMAIL_VERIFICATION: 'email_verification',
   PASSWORD_RESET: 'password_reset',
@@ -43,6 +48,7 @@ module.exports = {
   HTTP_STATUS,
   USER_ROLES,
   SORT_ORDERS,
+  RECIPE_SORT_COLUMNS,
   OTP_PURPOSES,
   AUTH_PROVIDERS,
   POST_SORT_COLUMNS,

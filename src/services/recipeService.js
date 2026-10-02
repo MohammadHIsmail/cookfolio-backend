@@ -2,8 +2,8 @@ const recipeDao = require('../daos/recipeDao');
 const AppError = require('../utils/AppError');
 const { HTTP_STATUS } = require('../../constants');
 
-async function list() {
-  return recipeDao.findAll();
+async function list(filters) {
+  return recipeDao.findAll(filters);
 }
 
 async function get(id) {
@@ -12,8 +12,8 @@ async function get(id) {
   return recipe;
 }
 
-async function create(userId, data) {
-  return recipeDao.create({ ...data, userId });
+async function create(data) {
+  return recipeDao.create({ ...data});
 }
 
 async function toggleFavorite(id) {
@@ -28,7 +28,9 @@ async function remove(id) {
 
 async function update(id, data) {
   await get(id);
-  return recipeDao.update(id, {...data});
+  const updated = await recipeDao.update(id, {...data});
+  if (!updated) throw new AppError('Recipe not found', HTTP_STATUS.NOT_FOUND);
+  return updated;
 }
 
 module.exports = { list, get, create, toggleFavorite, remove, update };
